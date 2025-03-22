@@ -1,0 +1,99 @@
+// Product.html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto;
+            gap: 20px;
+            /* height: 100px; */
+        }
+
+        #container>div>img {
+            width: 80%;
+            height: 300px;
+        }
+
+        #container>div {
+            text-align: center;
+            padding: 20px;
+            margin: 10px;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+            /* height: 70%; */
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Add to cart</h1>
+    <a href="Assignment4.html">Home</a>
+
+    <h1 id="tt">Total</h1>
+
+    
+    
+    <div id="container">
+
+    </div>
+</body>
+
+</html>
+
+<script>
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    let ans = cart.reduce((acc,el) => {
+        return acc + el.price
+    },0)
+
+    document.querySelector("#tt").innerText = ans;
+
+    displayCart(cart);
+    function displayCart(arr) {
+        document.querySelector("#container").innerText = ""
+        arr.forEach((el) => {
+            let box = document.createElement("div")
+            let image = document.createElement("img")
+            image.setAttribute("src", el.image)
+
+            let title = document.createElement("h1")
+            title.innerText = el.title
+
+            let description = document.createElement("h3")
+            description.innerText = el.description
+
+            let button = document.createElement("button")
+            button.innerText = el.rating.rate
+
+            let price = document.createElement("p")
+            price.innerText = "$"+el.price
+
+            let remove = document.createElement("button")
+            remove.innerText = "Remove"
+
+            remove.addEventListener("click",function(){
+                // console.log("hii")
+                cart.splice(el,1);
+                let ans = cart.reduce((acc,el)=>{
+                    return acc+el.price;
+                },0)
+                document.querySelector("#tt").innerText = ans;
+                localStorage.setItem("cart",JSON.stringify(cart));
+                displayCart(cart);
+            })
+
+            box.append(image, title, description, button, price, remove)
+            document.querySelector("#container").append(box)
+        })
+    }
+
+    
+   
+</script>

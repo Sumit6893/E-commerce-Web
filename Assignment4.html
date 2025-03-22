@@ -1,0 +1,127 @@
+// Product.html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce</title>
+    
+    <style>
+        #container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto;
+            gap: 20px;
+        }
+
+        #container>div>img {
+            width: 80%;
+            height: 300px;
+        }
+
+        #container>div {
+            text-align: center;
+            padding: 20px;
+            margin: 10px;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>E commerce Website</h1>
+    <a href="Assignment4(a)Addtocart.html" target="_blank">Cart</a>
+
+    <select name="" id="sort" onchange="sorting()">
+        <option value="">Select</option>
+        <option value="asc">ASC</option>
+        <option value="dsc">DSC</option>
+    </select>
+
+    <input oninput="search()" type="text" name="" id="" placeholder="search product ...">
+
+    <div id="container">
+
+    </div>
+</body>
+
+</html>
+
+<script>
+    let bag = []
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    fetch("https://fakestoreapi.com/products")
+        .then((res) => res.json())
+        .then((data) => {
+            bag = data
+            // console.log(data)
+            displayCart(data)
+        })
+        .catch((err) => console.log(err))
+
+
+    function displayCart(arr) {
+        document.querySelector("#container").innerText = ""
+        arr.forEach((el) => {
+            let box = document.createElement("div")
+            let image = document.createElement("img")
+            image.setAttribute("src", el.image)
+
+            let title = document.createElement("h1")
+            title.innerText = el.title
+
+            let description = document.createElement("h3")
+            description.innerText = el.description
+
+            let button = document.createElement("button")
+            button.innerText = el.rating.rate
+
+            let price = document.createElement("p")
+            price.innerText = el.price
+
+            let add = document.createElement("button")
+            add.innerText = "Add to cart"
+
+            add.addEventListener("click",function(){
+                cart.push(el);
+                localStorage.setItem("cart",JSON.stringify(cart));
+                // console.log("hii")
+
+            })
+            box.append(image, title, description, button, price, add)
+            document.querySelector("#container").append(box)
+        })
+    }
+
+
+    function search() {
+        let query = document.querySelector("input").value;
+        // console.log(bag)
+        let ans = bag.filter((el) => {
+            return el.title.toLowerCase().includes(query.toLowerCase())
+        })
+        displayCart(ans)
+    }
+    // <div>
+    //     <img src="image" alt="">
+    //     <h1>title</h1>
+    //     <h3>description</h3>
+    //     <button>rating</button>
+    //     <p>price</p>
+    // </div>
+
+    function sorting(){
+        let sortValue = document.querySelector("#sort").value;
+        console.log(sortValue);
+        if(sortValue == "asc"){
+            let sortBag = bag.sort((a,b) => a.rating.rate -b.rating.rate);
+            // console.log(sortBag);
+            displayCart(sortBag);
+        }else{
+            let sortBag = bag.sort((a,b) => b.rating.rate - a.rating.rate);
+            // console.log(sortBag);
+            displayCart(sortBag);
+        }
+    }
+</script>
